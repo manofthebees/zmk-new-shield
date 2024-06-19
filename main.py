@@ -20,14 +20,16 @@ def file_creation(issPlit):
     #put file & folder heiarchy creation here
     if issPlit == true:
         #create files with regards to a split keyboard
+        print(issPlit)
     elif issPlit == false:
         #create files with regards to a monoblock keyboard
+        print (issPlit)
+    else:
+        print("something went wrong. Restart the script please")
 
 def matrix_generation(rows,cols,transform):
     #put matrix generation stuff here
-
-
-
+    pass
 
 issPlit, keyboardName = user_input() 
 print (f"Keyboard Name: {keyboardName},  \nSplit?: {issPlit}")
