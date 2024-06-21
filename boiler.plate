@@ -28,3 +28,68 @@ jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
 [[[build.yml end]]]
+
+[[[split kconfig.defconfig start]]]
+if SHIELD_{{{kbdnm}}}_LEFT
+ 
+config ZMK_KEYBOARD_NAME
+    default "{{{kbdnm}}}"
+ 
+config ZMK_SPLIT_ROLE_CENTRAL
+    default y
+ 
+endif
+ 
+if SHIELD_{{{kbdnm}}}_LEFT || SHIELD_{{{kbdnm}}}_RIGHT
+ 
+config ZMK_SPLIT
+    default y
+ 
+endif
+[[[split kconfig.defconfig end]]]
+
+[[[split kconfig.shield start]]]
+config SHIELD_{{{kbdnm}}}_LEFT
+    def_bool $(shields_list_contains,{{{kbdnm}}}_left)
+    select SHIELD_{{{kbdnm}}}
+
+config SHIELD_{{{kbdnm}}}_RIGHT
+    def_bool $(shields_list_contains,{{{kbdnm}}}_right)
+    select SHIELD_{{{kbdnm}}}
+[[[split kconfig.shield end]]]
+
+[[[kbdname.conf start]]]
+CONFIG_ZMK_SLEEP=y
+CONFIG_ZMK_IDLE_TIMEOUT=30000
+CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=900000
+[[[kbdname.conf end]]]
+
+[[[kbdname.dtsi start]]]
+#include <dt-bindings/zmk/matrix_transform.h>
+
+
+/ {
+    chosen{
+        zmk,kscan=&kscan0;
+        zmk,matrix_transform = &default_transform;
+    };
+
+    default_transform: keymap_transform_0 {
+        compatible = "zmk,matrix-transform";
+        columns = <{{{cols}}}>;
+        rows = <{{{rows}}}>;
+      
+        map = <
+{{{matrix gen}}}
+            >;
+    };
+
+    kscan0: kscan {
+        compatible = "zmk,kscan-gpio-matrix";
+        label = "KSCAN";
+
+        diode-direction = "col2row";
+    };
+};
+[[[kbdname.dtsi end]]]
+
