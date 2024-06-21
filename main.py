@@ -56,7 +56,11 @@ def user_input():
 
 def fill_files(split, kbdnm):
     if split == True:
-        pass
+        user_values={
+            "kbdnm":kbdnm,
+            "cols":cols,
+            "rows":rows
+        }
         print("filling files for a split keyboard")
         #fill split files with the correct info
     elif split == False:

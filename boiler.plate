@@ -1,4 +1,5 @@
 [[[build.yaml start]]]
+filename: build.yaml
 ---
 include:
   - board: seeeduino_xiao_ble
@@ -8,6 +9,7 @@ include:
 [[[build.yaml end]]]
 
 [[[west.yml start]]]
+filename: west.yml
 manifest:
   remotes:
     - name: zmkfirmware
@@ -22,6 +24,7 @@ manifest:
 [[[west.yml end]]]
 
 [[[build.yml start]]]
+filename: build.yml
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
@@ -30,6 +33,7 @@ jobs:
 [[[build.yml end]]]
 
 [[[split kconfig.defconfig start]]]
+filename: kconfig.defconfig
 if SHIELD_{{{kbdnm}}}_LEFT
  
 config ZMK_KEYBOARD_NAME
@@ -49,6 +53,7 @@ endif
 [[[split kconfig.defconfig end]]]
 
 [[[split kconfig.shield start]]]
+filename: kconfig.shield
 config SHIELD_{{{kbdnm}}}_LEFT
     def_bool $(shields_list_contains,{{{kbdnm}}}_left)
     select SHIELD_{{{kbdnm}}}
@@ -59,6 +64,7 @@ config SHIELD_{{{kbdnm}}}_RIGHT
 [[[split kconfig.shield end]]]
 
 [[[kbdname.conf start]]]
+filename: 
 CONFIG_ZMK_SLEEP=y
 CONFIG_ZMK_IDLE_TIMEOUT=30000
 CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=900000

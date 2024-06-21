@@ -1,9 +1,0 @@
-from pathlib import Path
-import os
-
-open(Path.cwd()/"build.yaml",'w')
-print("Successfully created: build.yaml")
-open(Path.cwd()/kbdnm/".github/workflows/build.yml",'w')
-print("Successfully created: build.yml")
-open(Path.cwd()/kbdnm/"config/.west.yml",'w')
-print("Successfully created: west.yml")
