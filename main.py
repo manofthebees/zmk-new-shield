@@ -1,5 +1,7 @@
 import os
+import re
 import sys
+from pathlib import Path
 
 def restart_script(num_lines):
     for _ in range(num_lines):
@@ -24,10 +26,8 @@ def user_input():
     isSplit = input("is this a split keyboard? (y/n): ")
     if isSplit == "y":
         isSplit = True
-        #print("split keyboard generation")
     elif isSplit == "n" : 
         isSplit = False
-        #print("monoblock keyboard generation")
     else:
         print ("Invalid input, Please answer with 'y' or 'n'")
 
@@ -41,11 +41,11 @@ def user_input():
         
         if usrMCUchoice == 0:
             usrMCUchoice = "nice!nano"
-            print(usrMCUchoice)
+            #print(usrMCUchoice)
             # sets nice!nano as the mcu
         elif usrMCUchoice == 1:
             usrMCUchoice = "XIAO BLE nrf52840"
-            print(usrMCUchoice)
+            #print(usrMCUchoice)
             # sets the xiaoble as the mcu
         else:
             print("Invalid selection")
@@ -54,20 +54,94 @@ def user_input():
 
     return isSplit, usrKeyboardName, usrMCUchoice
 
-def file_creation(split, kbdnm, mcuSelec):
+def fill_files(split, kbdnm):
+    if split == True:
+        pass
+        print("filling files for a split keyboard")
+        #fill split files with the correct info
+    elif split == False:
+        pass
+        print("Filling files for a unibody keyboard")
+        #fill unibody files with the correct info
+    else:
+        print("something went wrong, please restart the script")
+
+def file_creation(split, kbdnm):
     #put file & folder heiarchy creation here
+    #create folder structure here:
+
+    current_directory = Path.cwd()
+    current_directory.joinpath(kbdnm).mkdir(parents=True,exist_ok=True)
+    print(f"Creating files in: {current_directory}/{kbdnm}")          
+    zmk_folders = [
+        kbdnm,
+        kbdnm+"/.github/workflows", 
+        kbdnm+"/config/boards/shields/"+kbdnm]
+
+    for folder in zmk_folders:
+        folder_path = current_directory / folder
+        try:
+            folder_path.mkdir(parents=True, exist_ok=True)
+            print(f"Successfully created: {folder_path}")
+        except OSError as error:
+            print(f"Error creating {folder_path}: {error}")
+
+    open(Path.cwd()/kbdnm/"build.yaml",'w')
+    print("Successfully created: build.yaml")
+    open(Path.cwd()/kbdnm/".github/workflows/build.yml",'w')
+    print("Successfully created: build.yml")
+    open(Path.cwd()/kbdnm/"config/.west.yml",'w')
+    print("Successfully created: west.yml")
+
     if issPlit == True:
-        #create files with regards to a split keyboard
-        print(split)
-        print(kbdnm)
+        #create files for a split keyboard
+        splitFiles = [
+            'Kconfig.shield',
+            'Kconfig.defconfig',
+            f'{kbdnm}.conf',
+            f'{kbdnm}.dtsi',
+            f'{kbdnm}.zmk.yml',
+            f'{kbdnm}_left.conf',
+            f'{kbdnm}_left.overlay',
+            f'{kbdnm}_right.conf',
+            f'{kbdnm}_right.overlay'
+        ]
+        working_directory = os.path.join(kbdnm,"config","boards","shields",kbdnm)
+
+        for thing in splitFiles:
+            file_path = os.path.join(working_directory, thing)
+            try:
+                with open(file_path, 'w'):  # Open the file in write mode to create it
+                    pass  # Do nothing, just create the file
+                print(f"Successfully created: ~/{file_path}")
+            except OSError as error:
+                print(f"Error creating ~/{file_path}: {error}")
+
     elif issPlit == False:
-        #create files with regards to a monoblock keyboard
-        print(split)
-        print(kbdnm)
+        #create files for a unibody keyboard
+        unibodyFiles = [
+            'Kconfig.shield',
+            'Kconfig.defconfig',
+            f'{kbdnm}.overlay',
+            f'{kbdnm}.keymap'
+        ]
+        working_directory = os.path.join(kbdnm,"config","boards","shields",kbdnm)
+
+        for thing in unibodyFiles:
+            file_path = os.path.join(working_directory, thing)
+            try:
+                with open(file_path, 'w'):  # Open the file in write mode to create it
+                    pass  # Do nothing, just create the file
+                print(f"Successfully created: ~/{file_path}")
+            except OSError as error:
+                print(f"Error creating ~/{file_path}: {error}")
+
+        fill_files(issPlit, kbdnm)
+
     else:
         print("something went wrong. please restart the script")
 
-def matrix_generation(rows,cols,transform):
+def matrix_generation(rows,cols):
     #put matrix generation stuff here
     pass
 

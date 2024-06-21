@@ -1,0 +1,30 @@
+[[[build.yaml start]]]
+---
+include:
+  - board: seeeduino_xiao_ble
+    shield: {{{kbdname}}}_left
+  - board: seeeduino_xiao_ble
+    shield: {{{kbdname}}}_right
+[[[build.yaml end]]]
+
+[[[west.yml start]]]
+manifest:
+  remotes:
+    - name: zmkfirmware
+      url-base: https://github.com/zmkfirmware
+  projects:
+    - name: zmk
+      remote: zmkfirmware
+      revision: main
+      import: app/west.yml
+  self:
+    path: config
+[[[west.yml end]]]
+
+[[[build.yml start]]]
+on: [push, pull_request, workflow_dispatch]
+
+jobs:
+  build:
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
+[[[build.yml end]]]
