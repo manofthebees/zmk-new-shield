@@ -1,15 +1,13 @@
-[[[build.yaml start]]]
-filename: build.yaml
+[[[base build.yaml start]]]
 ---
 include:
   - board: seeeduino_xiao_ble
     shield: {{{kbdname}}}_left
   - board: seeeduino_xiao_ble
     shield: {{{kbdname}}}_right
-[[[build.yaml end]]]
+[[[base build.yaml end]]]
 
-[[[west.yml start]]]
-filename: west.yml
+[[[base west.yml start]]]
 manifest:
   remotes:
     - name: zmkfirmware
@@ -21,19 +19,17 @@ manifest:
       import: app/west.yml
   self:
     path: config
-[[[west.yml end]]]
+[[[base west.yml end]]]
 
-[[[build.yml start]]]
-filename: build.yml
+[[[base build.yml start]]]
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
   build:
     uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@main
-[[[build.yml end]]]
+[[[base build.yml end]]]
 
 [[[split kconfig.defconfig start]]]
-filename: kconfig.defconfig
 if SHIELD_{{{kbdnm}}}_LEFT
  
 config ZMK_KEYBOARD_NAME
@@ -53,7 +49,6 @@ endif
 [[[split kconfig.defconfig end]]]
 
 [[[split kconfig.shield start]]]
-filename: kconfig.shield
 config SHIELD_{{{kbdnm}}}_LEFT
     def_bool $(shields_list_contains,{{{kbdnm}}}_left)
     select SHIELD_{{{kbdnm}}}
@@ -63,14 +58,13 @@ config SHIELD_{{{kbdnm}}}_RIGHT
     select SHIELD_{{{kbdnm}}}
 [[[split kconfig.shield end]]]
 
-[[[kbdname.conf start]]]
-filename: 
+[[[{{{kbdname}}}.conf start]]]
 CONFIG_ZMK_SLEEP=y
 CONFIG_ZMK_IDLE_TIMEOUT=30000
 CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=900000
 [[[kbdname.conf end]]]
 
-[[[kbdname.dtsi start]]]
+[[[{{{kbdname}}}.dtsi start]]]
 #include <dt-bindings/zmk/matrix_transform.h>
 
 
@@ -97,5 +91,5 @@ CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=900000
         diode-direction = "col2row";
     };
 };
-[[[kbdname.dtsi end]]]
+[[[{{{kbdname}}}.dtsi end]]]
 
