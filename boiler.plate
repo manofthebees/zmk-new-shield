@@ -64,7 +64,7 @@ CONFIG_ZMK_IDLE_TIMEOUT=30000
 CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=900000
 [[[kbdname.conf end]]]
 
-[[[{{{kbdname}}}.dtsi start]]]
+[[[split {{{kbdname}}}.dtsi start]]]
 #include <dt-bindings/zmk/matrix_transform.h>
 
 
@@ -91,5 +91,5 @@ CONFIG_ZMK_IDLE_SLEEP_TIMEOUT=900000
         diode-direction = "col2row";
     };
 };
-[[[{{{kbdname}}}.dtsi end]]]
+[[[split {{{kbdname}}}.dtsi end]]]
 
