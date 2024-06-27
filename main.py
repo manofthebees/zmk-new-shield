@@ -1,6 +1,7 @@
 import os
 import re
 import sys
+import tempfile
 from pathlib import Path
 
 def restart_script(num_lines):
@@ -18,6 +19,106 @@ def restart_script(num_lines):
     
     # Restart the script
     os.execv(python_executable, [python_executable, script_path] + sys.argv[1:])
+
+def find_file_in_directory(filename, directory='.'):
+    """
+    Recursively search for a file in the specified directory and its subfolders.
+    Returns the full path if found, else None.
+    """
+    # Use case-insensitive search with glob
+    for path in Path(directory).rglob('*'):
+        if path.is_file() and path.name.lower() == filename.lower():
+            return path
+    return None
+
+def process_boilerplate(issplit, kbdnm, cols=None, rows=None):
+    replacements = {'kbdnm': kbdnm, 'cols':cols, 'rows':rows,'kbdnm.caps':kbdnm.upper()}
+
+    if cols is not None:
+        replacements['cols'] = str(cols)
+    if rows is not None:
+        replacements['rows'] = str(rows)
+
+    # Read the boilerplate file content
+    input_file = 'boiler.plate'
+    try:
+        with open(input_file, 'r', encoding='utf-8') as file:
+            content = file.read()
+    except FileNotFoundError:
+        print(f"Error: File '{input_file}' not found.")
+        return
+    except Exception as e:
+        print(f"Error reading '{input_file}': {e}")
+        return
+
+    # Replace placeholders in the entire content
+    for key, value in replacements.items():
+        if key.endswith('.caps'):
+            original_key = key[:-5]  # Remove .caps suffix
+            placeholder = f'{{{key}}}'
+            value = value.upper()
+        else:
+            placeholder = f'{{{key}}}'
+        
+        content = content.replace(placeholder, value)
+
+    # Temporarily write modified content to a temp file
+    temp_filename = 'temp_boilerplate.tmp'
+    try:
+        with open(temp_filename, 'w', encoding='utf-8') as temp_file:
+            temp_file.write(content)
+    except Exception as e:
+        print(f"Error writing temporary file '{temp_filename}': {e}")
+        return
+
+    # Read from the temporary file
+    try:
+        with open(temp_filename, 'r', encoding='utf-8') as file:
+            temp_content = file.read()
+    except Exception as e:
+        print(f"Error reading temporary file '{temp_filename}': {e}")
+        return
+    
+    # Determine the patterns to match
+    if issplit:
+        patterns = ['base', 'split']
+    else:
+        patterns = ['base', 'unibody']
+
+    # Find matching sections in the temporary content
+    matches = []
+    for pattern in patterns:
+        matches.extend(re.findall(rf'\[\[\[{pattern} (.*?) start\]\]\](.*?)\[\[\[{pattern} \1 end\]\]\]', temp_content, re.DOTALL))
+
+    if not matches:
+        print("No matching sections found in the boilerplate file.")
+        return
+
+    print(f"Matches found: {matches}")
+
+    # Process each match and overwrite the corresponding file if not empty
+    for match in matches:
+        filename, file_content = match
+        filename = filename.strip()
+        file_content = file_content.strip()
+        
+        target_path = find_file_in_directory(filename)
+        
+        if not target_path:
+            print(f"File '{filename}' not found.")
+            continue
+
+        print(f"Overwriting file: {target_path}")
+        
+        try:
+            with open(target_path, 'w', encoding='utf-8') as target_file:
+                target_file.write(file_content + '\n')
+            print(f"Successfully overwritten {target_path}.")
+        except Exception as e:
+            print(f"Error overwriting '{target_path}': {e}")
+
+    # Leave the temporary file for inspection
+    print(f"Temporary file created: {temp_filename}")
 
 def user_input():
     usrKeyboardName = input ("Enter the keyboard name: ")
