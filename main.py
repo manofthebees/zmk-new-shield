@@ -94,7 +94,7 @@ def file_creation(split, kbdnm):
     print("Successfully created: build.yaml")
     open(Path.cwd()/kbdnm/".github/workflows/build.yml",'w')
     print("Successfully created: build.yml")
-    open(Path.cwd()/kbdnm/"config/.west.yml",'w')
+    open(Path.cwd()/kbdnm/"config/west.yml",'w')
     print("Successfully created: west.yml")
 
     if issPlit == True:
