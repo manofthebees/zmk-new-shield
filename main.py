@@ -31,12 +31,13 @@ def find_file_in_directory(filename, directory='.'):
             return path
     return None
 
-def process_boilerplate(issplit, kbdnm, mcu, cols, rows):
+def process_boilerplate(issplit, kbdnm, mcu, cols, rows, matr):
     replacements = {'kbdnm': kbdnm,
                     'kbdnm.caps':kbdnm.upper(), 
                     'mcu':mcu,
                     'cols':cols,
                     'rows':rows,
+                    'matrix gen':matr
                     }
                 
     if cols is not None:
@@ -158,10 +159,10 @@ def user_input():
     except ValueError:
         print("Please enter a valid number [between 0 & 1]")
 
-    userRows = input("enter the number of Rows in your keyboard: ")
+    #userRows = input("enter the number of Rows in your keyboard: ")
     userCols = input("enter the number of Columns in your keyboard: ")
 
-    return isSplit, usrKeyboardName, usrMCUchoice, userRows, userCols
+    return isSplit, usrKeyboardName, usrMCUchoice, userCols
 
 def fill_files(split, kbdnm):
     if split == True:
@@ -254,16 +255,61 @@ def file_creation(split, kbdnm):
     else:
         print("something went wrong. please restart the script")
 
-def matrix_generation(rows,cols):
-    #put matrix generation stuff here
-    pass
+def matrix_generation(kle_json, num_cols):
+    """
+    Generate a key matrix from a Keyboard Layout Editor (KLE) JSON file.
+    
+    Args:
+    kle_json (str): The path to the KLE JSON file.
+    num_cols (int): Number of columns to organize the keys into.
+    
+    Returns:
+    list: A 2D list representing the ZMK key matrix.
+    """
+    with open(kle_json, 'r') as file:
+        layout = json.load(file)
+    
+    keys = []
+    for item in layout:
+        if isinstance(item, list):
+            for subitem in item:
+                if isinstance(subitem, str):
+                    keys.append(subitem)
+    
+    # Calculate number of rows needed based on total keys and desired columns
+    num_rows = (len(keys) + num_cols - 1) // num_cols
+    
+    # Initialize the matrix
+    matrix = []
+    key_index = 0
 
-issPlit, keyboardName, mcuChoice, uRows, uCols = user_input() 
+    for row_index in range(num_rows):
+        current_row = []
+        for col_index in range(num_cols):
+            if key_index < len(keys):
+                current_row.append(f"RC({row_index},{col_index})")
+                key_index += 1
+        matrix.append(current_row)
+
+    matrix_str = ""
+
+    for row_index in range(num_rows):
+        current_row = []
+        for col_index in range(num_cols):
+            key_index = row_index * num_cols + col_index
+            if key_index < len(keys):
+                current_row.append(f"RC({row_index},{col_index})")
+        matrix_str += " ".join(current_row) + "\n"
+    
+    return matrix_str, num_rows
+
+issPlit, keyboardName, mcuChoice, uCols = user_input() 
 print (f"MCU: {mcuChoice} \nKeyboard Name: {keyboardName} \nSplit?: {issPlit}") 
 userConfirmation = input("Is this correct? (y/n) : ")
 if userConfirmation == 'y':
     file_creation(issPlit, keyboardName)
-    process_boilerplate(issPlit, keyboardName, mcuChoice, uRows, uCols)
+    uMatrix, uRows = matrix_generation(userKLE, uCols)
+    process_boilerplate(issPlit, keyboardName, mcuChoice, uCols, uRows, uMatrix)
 elif userConfirmation == 'n':
     print("restarting script")
     restart_script(15)
