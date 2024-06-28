@@ -31,14 +31,14 @@ def find_file_in_directory(filename, directory='.'):
             return path
     return None
 
-def process_boilerplate(issplit, kbdnm, mcu, cols=None, rows=None):
+def process_boilerplate(issplit, kbdnm, mcu, cols, rows):
     replacements = {'kbdnm': kbdnm,
                     'kbdnm.caps':kbdnm.upper(), 
                     'mcu':mcu,
                     'cols':cols,
                     'rows':rows,
-                }
-
+                    }
+                
     if cols is not None:
         replacements['cols'] = str(cols)
     if rows is not None:
@@ -146,11 +146,11 @@ def user_input():
         usrMCUchoice = int(usrMCUchoice)
         
         if usrMCUchoice == 0:
-            usrMCUchoice = "nice!nano"
+            usrMCUchoice = "nice_nano_v2"
             #print(usrMCUchoice)
             # sets nice!nano as the mcu
         elif usrMCUchoice == 1:
-            usrMCUchoice = "XIAO BLE nrf52840"
+            usrMCUchoice = "seeeduino_xiao_ble"
             #print(usrMCUchoice)
             # sets the xiaoble as the mcu
         else:
@@ -158,7 +158,10 @@ def user_input():
     except ValueError:
         print("Please enter a valid number [between 0 & 1]")
 
-    return isSplit, usrKeyboardName, usrMCUchoice
+    userRows = input("enter the number of Rows in your keyboard: ")
+    userCols = input("enter the number of Columns in your keyboard: ")
+
+    return isSplit, usrKeyboardName, usrMCUchoice, userRows, userCols
 
 def fill_files(split, kbdnm):
     if split == True:
@@ -260,7 +263,7 @@ print (f"MCU: {mcuChoice} \nKeyboard Name: {keyboardName} \nSplit?: {issPlit}")
 userConfirmation = input("Is this correct? (y/n) : ")
 if userConfirmation == 'y':
     file_creation(issPlit, keyboardName)
-    process_boilerplate()
+    process_boilerplate(issplit, keyboardName, usrMCUchoice, userCols, userRows)
 elif userConfirmation == 'n':
     print("restarting script")
     restart_script(15)
