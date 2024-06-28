@@ -31,8 +31,13 @@ def find_file_in_directory(filename, directory='.'):
             return path
     return None
 
-def process_boilerplate(issplit, kbdnm, cols=None, rows=None):
-    replacements = {'kbdnm': kbdnm, 'cols':cols, 'rows':rows,'kbdnm.caps':kbdnm.upper()}
+def process_boilerplate(issplit, kbdnm, mcu, cols=None, rows=None):
+    replacements = {'kbdnm': kbdnm,
+                    'kbdnm.caps':kbdnm.upper(), 
+                    'mcu':mcu,
+                    'cols':cols,
+                    'rows':rows,
+                }
 
     if cols is not None:
         replacements['cols'] = str(cols)
@@ -254,7 +259,8 @@ issPlit, keyboardName, mcuChoice = user_input()
 print (f"MCU: {mcuChoice} \nKeyboard Name: {keyboardName} \nSplit?: {issPlit}") 
 userConfirmation = input("Is this correct? (y/n) : ")
 if userConfirmation == 'y':
-    file_creation(issPlit,keyboardName)
+    file_creation(issPlit, keyboardName)
+    process_boilerplate()
 elif userConfirmation == 'n':
     print("restarting script")
     restart_script(15)

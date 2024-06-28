@@ -1,9 +1,9 @@
 [[[base build.yaml start]]]
 ---
 include:
-  - board: seeeduino_xiao_ble
+  - board: {mcu}
     shield: {kbdnm}_left
-  - board: seeeduino_xiao_ble
+  - board: {mcu}
     shield: {kbdnm}_right
 [[[base build.yaml end]]]
 
