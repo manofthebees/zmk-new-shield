@@ -258,12 +258,12 @@ def matrix_generation(rows,cols):
     #put matrix generation stuff here
     pass
 
-issPlit, keyboardName, mcuChoice = user_input() 
+issPlit, keyboardName, mcuChoice, uRows, uCols = user_input() 
 print (f"MCU: {mcuChoice} \nKeyboard Name: {keyboardName} \nSplit?: {issPlit}") 
 userConfirmation = input("Is this correct? (y/n) : ")
 if userConfirmation == 'y':
     file_creation(issPlit, keyboardName)
-    process_boilerplate(issplit, keyboardName, usrMCUchoice, userCols, userRows)
+    process_boilerplate(issPlit, keyboardName, mcuChoice, uRows, uCols)
 elif userConfirmation == 'n':
     print("restarting script")
     restart_script(15)
